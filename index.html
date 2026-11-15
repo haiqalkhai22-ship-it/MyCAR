@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1769aa"><meta name="description" content="CarCare Tracker - mileage, maintenance and family vehicle records">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
+<title>MyKereta Mileage Tracker</title><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar"><div class="brand"><span class="brand-icon">🚘</span><div><b>MyKereta</b><small>MILEAGE TRACKER</small></div></div><div class="top-actions"><span id="syncStatus" class="pill muted">Local mode</span><button class="icon-btn" id="notifyBtn" aria-label="Enable notifications">♧</button></div></header>
+<main>
+<section class="hero">
+ <div class="hero-head"><div><p class="eyebrow">VEHICLE OVERVIEW</p><h1 id="activeCarName">My vehicle</h1><p id="activeCarMeta" class="muted-light">Add your first vehicle to begin</p></div><button class="round-btn" id="addCarBtn">＋</button></div>
+ <div class="mileage-card"><div><span class="eyebrow">CURRENT MILEAGE</span><div class="big-mileage"><span id="currentMileage">0</span><small>KM</small></div><div class="mileage-edit"><input id="mileageInput" type="number" min="0" placeholder="Update odometer"><button id="saveMileageBtn">Update</button></div></div><div class="next-service"><span class="eyebrow">NEXT SERVICE</span><strong id="nextMileage">—</strong><small id="remainingMileage">No schedule yet</small></div></div>
+ <div class="progress-track"><div id="serviceProgress"></div></div>
+</section>
+<nav class="tabs" aria-label="Main sections">
+<button class="tab active" data-tab="overview">Dashboard</button><button class="tab" data-tab="maintenance">Servis</button><button class="tab" data-tab="parts">Sparepart</button><button class="tab" data-tab="family">Kongsi</button>
+</nav>
+<section id="overview" class="page active">
+ <div class="section-title"><div><p class="eyebrow">YOUR GARAGE</p><h2>Quick summary</h2></div><button class="text-btn" id="editCarBtn">Edit vehicle</button></div>
+ <div class="stat-grid"><article class="stat"><span>Maintenance records</span><b id="recordCount">0</b></article><article class="stat"><span>Total spending</span><b id="totalSpend">RM 0.00</b></article><article class="stat"><span>Upcoming reminders</span><b id="reminderCount">0</b></article></div>
+ <div class="section-title"><div><p class="eyebrow">UP NEXT</p><h2>Service reminders</h2></div><button class="text-btn" id="addReminderBtn">＋ Add</button></div>
+ <div id="reminderList" class="stack empty">No reminders yet. Add a maintenance schedule.</div>
+ <div class="section-title"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>Service history</h2></div><button class="text-btn" data-goto="maintenance">View all</button></div>
+ <div id="recentList" class="stack empty">No service records yet.</div>
+</section>
+<section id="mileage" class="page">
+ <div class="section-title"><div><p class="eyebrow">ODOMETER HISTORY</p><h2>Rekod mileage</h2></div></div>
+ <div class="panel"><h3>Tambah bacaan mileage</h3><p class="muted">Setiap kemas kini odometer akan disimpan dalam sejarah.</p><div class="filter-row"><input id="historyMileageInput" type="number" min="0" placeholder="Mileage terkini (KM)"><button class="primary" id="addMileageLogBtn">Simpan</button></div></div>
+ <div id="mileageHistoryList" class="stack empty">Belum ada rekod mileage.</div>
+</section>
+<section id="maintenance" class="page">
+ <div class="section-title"><div><p class="eyebrow">SERVICE LOGBOOK</p><h2>Maintenance records</h2></div><button class="primary small" id="addRecordBtn">＋ Record</button></div>
+ <div id="maintenanceList" class="stack empty">No maintenance records.</div>
+ <div class="section-title"><div><p class="eyebrow">SCHEDULE</p><h2>Maintenance intervals</h2></div><button class="text-btn" id="addScheduleBtn">＋ Schedule</button></div>
+ <div id="scheduleList" class="stack empty"></div>
+</section>
+<section id="parts" class="page">
+ <div class="section-title"><div><p class="eyebrow">MALAYSIA PRICE GUIDE</p><h2>Spare parts</h2></div></div>
+ <div class="filter-row"><select id="partsBrand"><option value="all">All brands</option><option>Perodua</option><option>Proton</option><option>Toyota</option><option>Honda</option><option>Nissan</option><option>Mazda</option></select><input id="partsSearch" placeholder="Search part or model"></div>
+ <p class="hint">Harga indikatif dalam RM, bukan quotation rasmi. Semak nombor alat ganti, model/tahun dan harga bengkel sebelum membeli.</p>
+ <div id="partsList" class="stack"></div>
+</section>
+<section id="family" class="page">
+ <div class="section-title"><div><p class="eyebrow">SHARED GARAGE</p><h2>Family access</h2></div></div>
+ <div class="panel">
+  <h3>Connect family phones</h3><p class="muted">Create a family garage or join using the same invite code. Both members can add and edit vehicles, mileage and service records.</p>
+  <label>Family garage name<input id="familyName" placeholder="Contoh: Garaj Keluarga"></label>
+  <div class="button-row"><button class="primary" id="createFamilyBtn">Create garage</button></div>
+  <label>Invite / join code<input id="joinCode" placeholder="Enter family code" autocapitalize="characters"></label>
+  <button class="secondary" id="joinFamilyBtn">Join garage</button>
+  <div id="familyInfo" class="family-info">Not connected to a family garage.</div>
+ </div>
+ <div class="panel">
+  <h3>Send family reminder</h3><label>Message<textarea id="familyMessage" rows="3" placeholder="Contoh: Ativa dah dekat mileage servis."></textarea></label>
+  <button class="primary" id="sendFamilyBtn">Send reminder</button>
+  <p class="hint">Family reminders sync instantly while the app is online. Background push notifications require Firebase Cloud Messaging setup (included in the project guide).</p>
+ </div>
+ <div class="panel">
+  <h3>Data & settings</h3>
+  <div class="button-row"><button class="secondary" id="exportBtn">Export backup</button><button class="secondary" id="importBtn">Import backup</button><input id="importFile" type="file" accept="application/json" hidden></div>
+  <button class="danger-outline" id="resetBtn">Reset local data</button>
+ </div>
+</section>
+</main>
+<nav class="bottom-nav"><button class="active" data-tab="overview">⌂<small>Dashboard</small></button><button data-tab="mileage">◷<small>Mileage</small></button><button data-tab="maintenance">▤<small>Servis</small></button><button data-tab="parts">⚙<small>Sparepart</small></button><button data-tab="family">♧<small>Kongsi</small></button></nav>
+<dialog id="vehicleDialog"><form method="dialog" id="vehicleForm"><div class="dialog-head"><h2 id="vehicleDialogTitle">Add vehicle</h2><button class="close" value="cancel">×</button></div><input type="hidden" id="vehicleId"><label>Brand<select id="vehicleBrand"><option>Perodua</option><option>Proton</option><option>Toyota</option><option>Honda</option><option>Nissan</option><option>Mazda</option><option>Other</option></select></label><label>Model<input id="vehicleModel" required placeholder="Contoh: Ativa 1.0 Turbo"></label><label>Year<input id="vehicleYear" type="number" min="1980" max="2099" placeholder="2022"></label><label>Registration number<input id="vehiclePlate" placeholder="Optional"></label><label>Current mileage (KM)<input id="vehicleMileage" type="number" min="0" required></label><div class="dialog-actions"><button class="primary" value="save" id="saveVehicleBtn">Save vehicle</button></div></form></dialog>
+<dialog id="recordDialog"><form method="dialog" id="recordForm"><div class="dialog-head"><h2>Add maintenance record</h2><button class="close" value="cancel">×</button></div><label>Service / item<input id="recordTitle" required placeholder="Engine oil & oil filter"></label><div class="two"><label>Date<input id="recordDate" type="date" required></label><label>Mileage (KM)<input id="recordMileage" type="number" min="0" required></label></div><div class="two"><label>Parts cost (RM)<input id="recordPartsCost" type="number" min="0" step=".01" value="0"></label><label>Labour (RM)<input id="recordLabour" type="number" min="0" step=".01" value="0"></label></div><label>Notes<input id="recordNotes" placeholder="Workshop, brand, receipt no."></label><div class="dialog-actions"><button class="primary" id="saveRecordBtn" value="save">Save record</button></div></form></dialog>
+<dialog id="scheduleDialog"><form method="dialog" id="scheduleForm"><div class="dialog-head"><h2>Maintenance schedule</h2><button class="close" value="cancel">×</button></div><label>Maintenance item<input id="scheduleTitle" required placeholder="Engine oil"></label><div class="two"><label>Interval (KM)<input id="scheduleInterval" type="number" min="1" required value="10000"></label><label>Last done at (KM)<input id="scheduleLast" type="number" min="0" required></label></div><label>Reminder before due (KM)<input id="scheduleLead" type="number" min="0" value="1000"></label><label>Next due date (optional)<input id="scheduleDate" type="date"></label><div class="dialog-actions"><button class="primary" value="save" id="saveScheduleBtn">Save schedule</button></div></form></dialog>
+<div id="toast" role="status"></div>
+<script type="module" src="app.js"></script>
+</body></html>
